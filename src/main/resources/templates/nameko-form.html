@@ -1,0 +1,324 @@
+
+<!DOCTYPE html>
+<html lang="ja" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title th:text="${nameko.id == 0} ? 'なめこを登録' : 'なめこを編集'">
+        なめこを登録
+    </title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: "Yu Gothic", "Meiryo", sans-serif;
+            color: #30291f;
+            background: radial-gradient(ellipse at top, #51445d 0, #29243a 65%);
+            min-height: 100vh;
+            padding-bottom: 40px;
+        }
+
+        .top-menu {
+            background: #211c30;
+            border-bottom: 4px solid #b69a63;
+            padding: 14px 30px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+        }
+
+        .logo {
+            color: #ffe5a5;
+            font-size: 27px;
+            font-weight: bold;
+            text-decoration: none;
+        }
+
+        .menu-links {
+            display: flex;
+            gap: 12px;
+        }
+
+        .menu-links a {
+            color: #fff0c7;
+            text-decoration: none;
+            border: 1px solid #a68a54;
+            border-radius: 8px;
+            padding: 10px 16px;
+            background: #40344a;
+            font-size: 14px;
+        }
+
+        .menu-links a:hover {
+            background: #68543e;
+        }
+
+        .container {
+            max-width: 760px;
+            margin: 35px auto;
+            padding: 0 20px;
+        }
+
+        .page-heading {
+            color: #ffe5a5;
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .page-heading h1 {
+            margin: 0;
+            font-size: 32px;
+            letter-spacing: 3px;
+        }
+
+        .page-heading p {
+            color: #d2c4a8;
+            margin-top: 10px;
+        }
+
+        .form-card {
+            background: #f9e2ad;
+            border: 5px solid #fff8e6;
+            outline: 2px solid #6b4b2c;
+            border-radius: 24px;
+            padding: 30px;
+            box-shadow: 0 12px 35px rgba(0, 0, 0, 0.3);
+        }
+
+        .section-title {
+            color: #4f3825;
+            font-size: 22px;
+            margin: 0 0 8px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #c5a76b;
+        }
+
+        .form-description {
+            color: #806747;
+            font-size: 14px;
+            margin-bottom: 25px;
+        }
+
+        label {
+            display: block;
+            margin: 20px 0 8px;
+            color: #5b4025;
+            font-weight: bold;
+        }
+
+        input[type="text"],
+        textarea {
+            display: block;
+            width: 100%;
+            padding: 12px 14px;
+            border: 1px solid #c7b17e;
+            border-radius: 10px;
+            background: #fffaf0;
+            font-size: 15px;
+            color: #403322;
+            outline-color: #8a9b61;
+        }
+
+        textarea {
+            height: 130px;
+            resize: vertical;
+            line-height: 1.7;
+        }
+
+        .image-upload {
+            margin-top: 20px;
+            padding: 18px;
+            border: 2px dashed #b69a63;
+            border-radius: 14px;
+            background: #f3dba7;
+        }
+
+        .image-upload label {
+            margin-top: 0;
+        }
+
+        input[type="file"] {
+            width: 100%;
+            padding: 12px;
+            background: #fffaf0;
+            border: 1px solid #c7b17e;
+            border-radius: 8px;
+        }
+
+        .current-image {
+            display: block;
+            width: 180px;
+            height: 180px;
+            object-fit: contain;
+            margin: 12px 0;
+            padding: 8px;
+            border: 3px solid #fff4d8;
+            border-radius: 12px;
+            background: #d5f4f3;
+        }
+
+        .help-text {
+            margin: 10px 0 0;
+            color: #806747;
+            font-size: 13px;
+            line-height: 1.6;
+        }
+
+        .submit-button {
+            display: block;
+            width: 100%;
+            margin-top: 28px;
+            padding: 14px;
+            border: 2px solid #fff3d2;
+            outline: 1px solid #a4753e;
+            border-radius: 12px;
+            background: linear-gradient(#e8bd72, #c68d43);
+            color: #392717;
+            font-size: 17px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .submit-button:hover {
+            background: #f3d294;
+            transform: translateY(-2px);
+        }
+
+        .back-button {
+            display: block;
+            width: fit-content;
+            margin: 22px auto 0;
+            padding: 10px 22px;
+            color: #fff0c7;
+            text-decoration: none;
+            border: 1px solid #a68a54;
+            border-radius: 20px;
+        }
+
+        .back-button:hover {
+            background: #40344a;
+        }
+
+        @media (max-width: 600px) {
+            .top-menu {
+                align-items: flex-start;
+                flex-direction: column;
+                padding: 15px 20px;
+            }
+
+            .container {
+                margin-top: 22px;
+                padding: 0 12px;
+            }
+
+            .form-card {
+                padding: 20px 16px;
+            }
+
+            .page-heading h1 {
+                font-size: 26px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<header class="top-menu">
+    <a th:href="@{/namekos}" class="logo">🍄 なめこ図鑑</a>
+
+    <nav class="menu-links">
+        <a th:href="@{/namekos}">図鑑に戻る</a>
+    </nav>
+</header>
+
+<main class="container">
+
+    <div class="page-heading">
+        <h1 th:text="${nameko.id == 0} ? '🍄 なめこを登録' : '✏️ なめこを編集'">
+            🍄 なめこを登録
+        </h1>
+
+        <p th:text="${nameko.id == 0}
+            ? '新しいなめこを図鑑に仲間入りさせよう！'
+            : 'なめこの情報を変更しよう！'">
+            新しいなめこを図鑑に仲間入りさせよう！
+        </p>
+    </div>
+
+    <div class="form-card">
+
+        <h2 class="section-title">なめこの情報</h2>
+
+        <p class="form-description">
+            名前や特徴、画像を登録・変更できるよ。
+        </p>
+
+        <form th:action="${nameko.id == 0}
+                    ? @{/namekos/new}
+                    : @{/namekos/{id}/edit(id=${nameko.id})}"
+              th:object="${nameko}"
+              method="post"
+              enctype="multipart/form-data">
+
+            <label for="name">なめこの名前</label>
+            <input type="text"
+                   id="name"
+                   th:field="*{name}"
+                   placeholder="例：マサル"
+                   required>
+
+            <label for="description">説明</label>
+            <textarea id="description"
+                      th:field="*{description}"
+                      placeholder="このなめこの特徴を書いてね"
+                      required></textarea>
+
+            <div class="image-upload">
+                <label for="imageFile">📷 なめこの画像</label>
+
+                <div th:if="${nameko.image != null and !nameko.image.isEmpty()}">
+                    <p class="help-text">現在の画像</p>
+                    <img class="current-image"
+                         th:src="@{/images/{filename}(filename=${nameko.image})}"
+                         alt="現在登録されているなめこの画像">
+                </div>
+
+                <input type="file"
+                       id="imageFile"
+                       name="imageFile"
+                       accept="image/*">
+
+                <p class="help-text">
+                    パソコンに保存されている画像を選択できるよ。<br>
+                    編集時に画像を選ばなければ、現在の画像を残すよ。
+                </p>
+            </div>
+
+            <button type="submit"
+                    class="submit-button"
+                    th:text="${nameko.id == 0}
+                        ? '🍄 図鑑に登録する'
+                        : '✏️ 変更を保存する'">
+                🍄 図鑑に登録する
+            </button>
+
+        </form>
+
+    </div>
+
+    <a th:href="@{/namekos}" class="back-button">
+        ← 図鑑一覧に戻る
+    </a>
+
+</main>
+
+</body>
+</html>

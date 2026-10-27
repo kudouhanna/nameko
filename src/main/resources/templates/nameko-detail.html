@@ -1,0 +1,405 @@
+
+<!DOCTYPE html>
+<html lang="ja" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>なめこの詳細</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: "Yu Gothic", "Meiryo", sans-serif;
+            color: #30291f;
+            background: radial-gradient(ellipse at top, #51445d 0, #29243a 65%);
+            min-height: 100vh;
+            padding-bottom: 40px;
+        }
+
+        /* 上部メニュー */
+        .top-menu {
+            background: #211c30;
+            border-bottom: 4px solid #b69a63;
+            padding: 14px 35px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+        }
+
+        .logo {
+            color: #ffe5a5;
+            font-size: 27px;
+            font-weight: bold;
+            text-decoration: none;
+            white-space: nowrap;
+        }
+
+        .menu-links {
+            display: flex;
+            gap: 12px;
+        }
+
+        .menu-links a {
+            color: #fff0c7;
+            text-decoration: none;
+            border: 1px solid #a68a54;
+            border-radius: 8px;
+            padding: 10px 18px;
+            background: #40344a;
+            font-size: 14px;
+        }
+
+        .menu-links a:hover {
+            background: #68543e;
+        }
+
+        /* メイン */
+        .container {
+            max-width: 1100px;
+            margin: 35px auto;
+            padding: 0 25px;
+        }
+
+        .page-heading {
+            color: #ffe5a5;
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .page-heading h1 {
+            margin: 0;
+            font-size: 32px;
+            letter-spacing: 4px;
+        }
+
+        .page-heading p {
+            color: #d2c4a8;
+            margin-top: 10px;
+        }
+
+        /* 図鑑の外枠 */
+        .detail-card {
+            background: #f9e2ad;
+            border: 5px solid #fff8e6;
+            outline: 2px solid #6b4b2c;
+            border-radius: 24px;
+            padding: 28px;
+            box-shadow: 0 12px 35px rgba(0, 0, 0, 0.3);
+        }
+
+        .card-number {
+            color: #5b4025;
+            font-size: 16px;
+            font-weight: bold;
+            border-bottom: 2px solid #c5a76b;
+            padding-bottom: 14px;
+            margin-bottom: 22px;
+        }
+
+        /* 上段：画像と情報 */
+        .detail-main {
+            display: grid;
+            grid-template-columns: 1.1fr 1fr;
+            gap: 25px;
+        }
+
+        .image-area {
+            min-height: 350px;
+            background: #74b6b5;
+            border: 4px solid #d6c18c;
+            border-radius: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .nameko-image {
+            display: block;
+            width: 100%;
+            height: 350px;
+            padding: 15px;
+            object-fit: contain;
+        }
+
+        .no-image {
+            color: #f9ffff;
+            text-align: center;
+            font-size: 16px;
+        }
+
+        .info-area {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .info-box {
+            background: #e6cc96;
+            border: 1px solid #d0b47a;
+            border-radius: 13px;
+            padding: 18px;
+        }
+
+        .info-label {
+            display: block;
+            color: #65513b;
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+
+        .nameko-name {
+            margin: 0;
+            color: #4f3825;
+            font-size: 30px;
+            font-weight: bold;
+            overflow-wrap: anywhere;
+        }
+
+        .rarity {
+            margin: 0;
+            color: #a16d00;
+            font-size: 24px;
+            font-weight: bold;
+            letter-spacing: 2px;
+            overflow-wrap: anywhere;
+        }
+
+        .info-value {
+            font-size: 19px;
+            font-weight: bold;
+            color: #51402c;
+        }
+
+        /* 説明欄 */
+        .description-title {
+            color: #5b4025;
+            font-size: 20px;
+            font-weight: bold;
+            margin: 28px 0 12px;
+        }
+
+        .description {
+            background: #f0d9a5;
+            border: 1px solid #e1c48a;
+            border-radius: 13px;
+            padding: 20px;
+            line-height: 1.9;
+            white-space: pre-wrap;
+            overflow-wrap: anywhere;
+            min-height: 120px;
+            color: #5c4a34;
+        }
+
+        /* 下部ボタン */
+        .bottom-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 28px;
+        }
+
+        .button {
+            display: inline-block;
+            min-width: 190px;
+            text-align: center;
+            padding: 13px 22px;
+            border: 2px solid #fff3d2;
+            outline: 1px solid #a4753e;
+            border-radius: 12px;
+            background: linear-gradient(#e8bd72, #c68d43);
+            color: #392717;
+            text-decoration: none;
+            font-size: 15px;
+            font-weight: bold;
+            transition: 0.2s;
+        }
+
+        .button:hover {
+            background: #f3d294;
+            transform: translateY(-2px);
+        }
+
+        /* スマホ対応 */
+        @media (max-width: 700px) {
+            .top-menu {
+                padding: 15px 18px;
+                flex-wrap: wrap;
+            }
+
+            .container {
+                margin-top: 22px;
+                padding: 0 12px;
+            }
+
+            .page-heading h1 {
+                font-size: 26px;
+            }
+
+            .detail-card {
+                padding: 17px;
+            }
+
+            .detail-main {
+                grid-template-columns: 1fr;
+            }
+
+            .image-area {
+                min-height: 250px;
+            }
+
+            .nameko-image {
+                height: 250px;
+            }
+
+            .nameko-name {
+                font-size: 25px;
+            }
+
+            .bottom-buttons {
+                flex-direction: column;
+            }
+
+            .button {
+                width: 100%;
+            }
+        }
+
+        .action-buttons {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-top: 30px;
+        }
+
+        .action-button {
+            display: inline-block;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 10px;
+            font-size: 15px;
+            font-weight: bold;
+            text-decoration: none;
+            cursor: pointer;
+            text-align: center;
+        }
+
+        .edit-button {
+            background: #d8e8ef;
+            color: #344f62;
+        }
+
+        .delete-button {
+            background: #a84f58;
+            color: white;
+        }
+
+        .back-button {
+            background: #e9d9b7;
+            color: #57462f;
+        }
+
+        .action-buttons form {
+            margin: 0;
+        }
+    </style>
+</head>
+
+<body>
+
+<header class="top-menu">
+    <a th:href="@{/namekos}" class="logo">🍄 なめこ図鑑</a>
+
+    <nav class="menu-links">
+        <a th:href="@{/namekos}">図鑑一覧</a>
+        <a th:href="@{/namekos/new}">＋ なめこ登録</a>
+    </nav>
+</header>
+
+<main class="container">
+
+    <div class="page-heading">
+        <h1>なめこ図鑑</h1>
+    </div>
+
+    <div class="detail-card">
+
+        <div class="card-number">
+            📖 管理ID：
+            <span th:text="${nameko.id}">1</span>
+        </div>
+
+        <div class="detail-main">
+
+            <!-- なめこの画像 -->
+            <div class="image-area">
+
+                <img th:if="${nameko.image != null and !#strings.isEmpty(nameko.image)}"
+                     th:src="@{'/images/' + ${nameko.image}}"
+                     th:alt="${nameko.name}"
+                     class="nameko-image">
+
+                <span class="no-image"
+                      th:if="${nameko.image == null or #strings.isEmpty(nameko.image)}">
+                    🍄<br>画像未登録
+                </span>
+
+            </div>
+
+            <!-- なめこの情報 -->
+            <div class="info-area">
+
+                <div class="info-box">
+                    <span class="info-label">なめこの名前</span>
+                    <p class="nameko-name"
+                       th:text="${nameko.name}">
+                        なめこの名前
+                    </p>
+                </div>
+
+
+
+            </div>
+
+        </div>
+
+        <!-- なめこの説明 -->
+        <p class="description-title">📜 なめこの説明</p>
+
+        <div class="description"
+             th:text="${nameko.description}">
+            なめこの説明がここに表示されます。
+        </div>
+
+        <div class="action-buttons">
+            <a th:href="@{/namekos/{id}/edit(id=${nameko.id})}"
+               class="action-button edit-button">
+                ✏️ 編集
+            </a>
+
+            <form th:action="@{/namekos/{id}/delete(id=${nameko.id})}"
+                  method="post"
+                  onsubmit="return confirm('このなめこを図鑑から削除しますか？');">
+                <button type="submit" class="action-button delete-button">
+                    🗑️ 削除
+                </button>
+            </form>
+
+            <a th:href="@{/namekos}" class="action-button back-button">
+                ← 図鑑一覧に戻る
+            </a>
+        </div>
+
+    </div>
+
+</main>
+
+</body>
+</html>
