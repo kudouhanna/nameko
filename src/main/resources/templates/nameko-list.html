@@ -15,8 +15,7 @@
             margin: 0;
             font-family: "Yu Gothic", "Meiryo", sans-serif;
             color: #30291f;
-            background:
-                    radial-gradient(ellipse at top, #51445d 0, #29243a 65%);
+            background: radial-gradient(ellipse at top, #51445d 0, #29243a 65%);
             min-height: 100vh;
         }
 
@@ -156,25 +155,15 @@
             box-shadow: 0 8px 15px rgba(88, 61, 32, 0.25);
         }
 
-        .card-number {
-            font-size: 14px;
-            font-weight: bold;
-            border-bottom: 1px solid #c9ad76;
-            padding-bottom: 8px;
-            margin-bottom: 10px;
-        }
-
-        /* 画像と情報を横並びに */
+        /* 画像をカードの横幅いっぱいに表示 */
         .card-main {
-            display: grid;
-            grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
-            gap: 10px;
-            align-items: stretch;
+            display: block;
+            width: 100%;
         }
 
         .image-area {
-            min-width: 0;
-            min-height: 155px;
+            width: 100%;
+            height: 240px;
             background: #74b6b5;
             border: 3px solid #d6c18c;
             border-radius: 13px;
@@ -186,48 +175,15 @@
 
         .nameko-image {
             width: 100%;
-            height: 155px;
+            height: 100%;
             padding: 8px;
             object-fit: contain;
         }
 
         .no-image {
             color: #f9ffff;
-            font-size: 13px;
+            font-size: 15px;
             text-align: center;
-        }
-
-        .info-area {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
-
-        .info-box {
-            background: #e6cc96;
-            border-radius: 10px;
-            padding: 9px 8px;
-            min-width: 0;
-        }
-
-        .info-label {
-            display: block;
-            font-size: 12px;
-            color: #65513b;
-            margin-bottom: 5px;
-        }
-
-        .info-value {
-            display: block;
-            font-size: 17px;
-            font-weight: bold;
-            text-align: right;
-            overflow-wrap: anywhere;
-        }
-
-        .rarity {
-            color: #a16d00;
-            letter-spacing: 1px;
         }
 
         /* 名前の帯 */
@@ -240,6 +196,7 @@
             font-size: 17px;
         }
 
+        /* 説明 */
         .description {
             min-height: 75px;
             margin: 10px 0;
@@ -252,6 +209,7 @@
             overflow-wrap: anywhere;
         }
 
+        /* 詳細ボタン */
         .button {
             display: block;
             text-align: center;
@@ -269,6 +227,7 @@
             background: #f3d294;
         }
 
+        /* なめこがいない場合 */
         .empty-message {
             text-align: center;
             padding: 45px 15px;
@@ -317,6 +276,10 @@
             .menu-links a {
                 padding: 8px 10px;
             }
+
+            .image-area {
+                height: 220px;
+            }
         }
     </style>
 </head>
@@ -327,7 +290,6 @@
     <a th:href="@{/namekos}" class="logo">🍄 なめこ図鑑</a>
 
     <nav class="menu-links">
-        <a th:href="@{/namekos}">図鑑</a>
         <a th:href="@{/namekos/new}">＋ なめこ登録</a>
     </nav>
 </header>
@@ -350,26 +312,22 @@
             </span>
         </div>
 
+        <!-- 名前検索 -->
         <div class="search-box">
             <input type="text"
                    id="searchInput"
                    placeholder="🔍 なめこの名前で検索">
         </div>
 
+        <!-- なめこ一覧 -->
         <div class="nameko-list"
              th:if="${!#lists.isEmpty(namekos)}">
 
             <div class="card"
-                 th:each="nameko, stat : ${namekos}">
+                 th:each="nameko : ${namekos}">
 
-                <div class="card-number">
-                    No.
-                    <span th:text="${#numbers.formatInteger(stat.index + 1, 3)}">001</span>
-                    <span th:text="${nameko.name}">なめこの名前</span>
-                </div>
-
+                <!-- 画像 -->
                 <div class="card-main">
-
                     <div class="image-area">
 
                         <img th:if="${nameko.image != null and !#strings.isEmpty(nameko.image)}"
@@ -377,38 +335,27 @@
                              th:alt="${nameko.name}"
                              class="nameko-image">
 
-
                         <span class="no-image"
                               th:if="${nameko.image == null or #strings.isEmpty(nameko.image)}">
                             🍄<br>画像なし
                         </span>
 
                     </div>
-
-                    <div class="info-area">
-
-
-                        <div class="info-box">
-                            <span class="info-label">登録番号</span>
-                            <span class="info-value"
-                                  th:text="'No.' + ${nameko.id}">
-                                No.1
-                            </span>
-                        </div>
-
-                    </div>
                 </div>
 
+                <!-- 名前 -->
                 <div class="name-area"
                      th:text="${nameko.name}">
                     なめこの名前
                 </div>
 
+                <!-- 説明 -->
                 <p class="description"
                    th:text="${nameko.description}">
                     なめこの説明が入ります。
                 </p>
 
+                <!-- 詳細ボタン -->
                 <a th:href="@{/namekos/{id}(id=${nameko.id})}"
                    class="button">
                     詳細を見る
@@ -418,10 +365,12 @@
 
         </div>
 
+        <!-- 登録データがない場合 -->
         <div class="empty-message"
              th:if="${#lists.isEmpty(namekos)}">
             <h3>まだなめこがいないよ！</h3>
             <p>最初のなめこを図鑑に登録してみよう 🍄</p>
+
             <a th:href="@{/namekos/new}" class="button">
                 なめこを登録する
             </a>
@@ -462,4 +411,3 @@
 
 </body>
 </html>
-

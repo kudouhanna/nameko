@@ -1,5 +1,5 @@
 
-        package com.example.nameko.controller;
+package com.example.nameko.controller;
 
 import com.example.nameko.dto.Nameko;
 import com.example.nameko.service.NamekoService;
@@ -29,7 +29,9 @@ public class NamekoPageController {
     // なめこ図鑑一覧
     @GetMapping("/namekos")
     public String showNamekos(Model model) {
-        model.addAttribute("namekos", namekoService.findAll());
+        var namekos = namekoService.findAll();
+
+        model.addAttribute("namekos", namekos);
         return "nameko-list";
     }
 
@@ -137,10 +139,11 @@ public class NamekoPageController {
         // ファイル名が重複しないようにUUIDを使用
         String filename = UUID.randomUUID() + extension;
 
-        // 画像の保存先
         Path uploadPath = Paths.get(
-                "src/main/resources/static/images"
-        );
+                System.getProperty("user.dir"),
+                "uploads",
+                "images"
+        ).toAbsolutePath().normalize();
 
         // 保存先フォルダがなければ作成
         Files.createDirectories(uploadPath);
@@ -153,4 +156,3 @@ public class NamekoPageController {
         return filename;
     }
 }
-
